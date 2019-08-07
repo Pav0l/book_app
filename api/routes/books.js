@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const Books = require('../../models/books');
+const Authors = require('../../models/authors');
+const BA = require('../../models/book-authors');
 
 /**
  * [GET] /api/books
@@ -18,7 +20,7 @@ router.get('/', async (req, res) => {
       res.status(200).json(books);
     }
   } catch (err) {
-    console.error({ error: err });
+    res.status(500).json({ error: err });
   }
 });
 
@@ -39,7 +41,34 @@ router.get('/:id', async (req, res) => {
     }
     res.status(200).json(book);
   } catch (err) {
-    console.error({ error: err });
+    res.status(500).json({ error: err });
+  }
+});
+
+router.post('/', async (req, res) => {
+  const { title, description, authors } = req.body;
+  try {
+    if (!title || !description || !authors) {
+      res.status(400).json({ message: 'Missing body parameters' });
+    }
+
+    const [newBook] = await Books.add({ title, description });
+
+    for (let author of authors) {
+      const [authorExist] = await Authors.filter({ name: author });
+      var author_id;
+      if (!authorExist) {
+        //   create new author
+        [author_id] = await Authors.add({ name: author });
+      } else {
+        author_id = authorExist.id;
+      }
+
+      const newRel = await BA.add({ book_id: newBook, author_id });
+    }
+    res.status(201).json({ book_id: newBook });
+  } catch (err) {
+    res.status(500).json({ error: err });
   }
 });
 
