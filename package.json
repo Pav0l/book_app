@@ -1,0 +1,35 @@
+{
+  "name": "book-collection-server",
+  "version": "1.0.0",
+  "description": "Simple server that supports standard CRUD operations to handle Books resource",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pav0l/book_app.git"
+  },
+  "author": "Pav0l",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Pav0l/book_app/issues"
+  },
+  "homepage": "https://github.com/Pav0l/book_app#readme",
+  "dependencies": {
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^8.0.0",
+    "express": "^4.17.1",
+    "helmet": "^3.20.0",
+    "knex": "^0.19.1",
+    "pg": "^7.12.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "cross-env": "^5.2.0",
+    "mocha": "^6.2.0",
+    "nodemon": "^1.19.1",
+    "supertest": "^4.0.2"
+  }
+}
