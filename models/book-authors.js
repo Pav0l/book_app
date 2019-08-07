@@ -1,9 +1,8 @@
 const db = require('../data/db');
 
 module.exports = {
-  getByBookId: book_id => db('book-authors-rel').where({ book_id }),
-  getByAuthorId: author_id => db('book-authors-rel').where({ author_id }),
   get: () => db('book-authors-rel'),
+  filter: query => db('book-authors-rel').where(query),
   add: rel => db('book-authors-rel').insert(rel),
   update: (id, changes) =>
     db('book-authors-rel')
