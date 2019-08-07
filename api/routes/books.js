@@ -25,6 +25,7 @@ router.get('/', async (req, res) => {
 
 /**
  * [GET] /api/books/:id
+ * Params: valid book id
  * Returns detailed book object
  */
 router.get('/:id', async (req, res) => {
@@ -44,6 +45,15 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+/**
+ * [POST] /api/books
+ * req.body => {
+	"title": "New book2",
+	"description": "Hi",
+	"authors": ["author3", "author4"]
+    }
+ * Returns detailed book object
+ */
 router.post('/', async (req, res) => {
   const { title, description, authors } = req.body;
   try {
@@ -61,6 +71,11 @@ router.post('/', async (req, res) => {
   }
 });
 
+/**
+ * [DELETE] /api/books/:id
+ * Params: valid book id
+ * Returns OK message on success
+ */
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -79,6 +94,16 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+/**
+ * [PUT] /api/books/:id
+ * Params: valid book id
+ * req.body => {
+	"title": "New book2",
+	"description": "Hi",
+	"authors": ["author3", "author4"]
+    }
+ * Returns ok message on success
+ */
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
