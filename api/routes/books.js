@@ -1,7 +1,6 @@
 const router = require('express').Router();
+const { updateBookAuthorRel, delRels } = require('../../util/helpers');
 const Books = require('../../models/books');
-const Authors = require('../../models/authors');
-const BA = require('../../models/book-authors');
 
 /**
  * [GET] /api/books
@@ -54,18 +53,8 @@ router.post('/', async (req, res) => {
 
     const [newBook] = await Books.add({ title, description });
 
-    for (let author of authors) {
-      const [authorExist] = await Authors.filter({ name: author });
-      var author_id;
-      if (!authorExist) {
-        //   create new author
-        [author_id] = await Authors.add({ name: author });
-      } else {
-        author_id = authorExist.id;
-      }
+    updateBookAuthorRel(authors, newBook);
 
-      await BA.add({ book_id: newBook, author_id });
-    }
     res.status(201).json({ book_id: newBook });
   } catch (err) {
     res.status(500).json({ error: err });
@@ -107,23 +96,11 @@ router.put('/:id', async (req, res) => {
         .json({ message: 'Book with this ID does not exist' });
     }
 
-    for (let author of authors) {
-      const [authorExist] = await Authors.filter({ name: author });
-      var author_id;
-      if (!authorExist) {
-        //   create new author
-        [author_id] = await Authors.add({ name: author });
-      } else {
-        author_id = authorExist.id;
-      }
-
-      await BA.add({ book_id: book.id, author_id });
-    }
-
-    const updatedBook = await Books.update(id, { title, description });
-    res.status(200).json(updatedBook);
+    await delRels(book.id);
+    await updateBookAuthorRel(authors, book.id);
+    await Books.update(id, { title, description });
+    res.status(200).json({ message: 'OK' });
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err });
   }
 });
