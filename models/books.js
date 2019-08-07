@@ -4,7 +4,10 @@ const Author = require('./authors');
 module.exports = {
   getById: async id => {
     let [book] = await db('books').where({ id });
-    book.authors = await Author.getBookAuthors(book.id);
+
+    if (book) {
+      book.authors = await Author.getBookAuthors(book.id);
+    }
     return book;
   },
   get: () => db('books'),
@@ -16,7 +19,10 @@ module.exports = {
     }
     return books;
   },
-  add: book => db('books').insert(book),
+  add: book =>
+    db('books')
+      .insert(book)
+      .returning('id'),
   update: (id, changes) =>
     db('books')
       .where({ id })
