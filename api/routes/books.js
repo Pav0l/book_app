@@ -64,7 +64,7 @@ router.post('/', async (req, res) => {
         author_id = authorExist.id;
       }
 
-      const newRel = await BA.add({ book_id: newBook, author_id });
+      await BA.add({ book_id: newBook, author_id });
     }
     res.status(201).json({ book_id: newBook });
   } catch (err) {
@@ -86,6 +86,44 @@ router.delete('/:id', async (req, res) => {
       res.status(200).json({ message: 'OK' });
     }
   } catch (err) {
+    res.status(500).json({ error: err });
+  }
+});
+
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, authors } = req.body;
+
+    if (!title || !description || !authors) {
+      res.status(400).json({ message: 'Missing body parameters' });
+    }
+
+    const book = await Books.getById(id);
+
+    if (!book) {
+      return res
+        .status(404)
+        .json({ message: 'Book with this ID does not exist' });
+    }
+
+    for (let author of authors) {
+      const [authorExist] = await Authors.filter({ name: author });
+      var author_id;
+      if (!authorExist) {
+        //   create new author
+        [author_id] = await Authors.add({ name: author });
+      } else {
+        author_id = authorExist.id;
+      }
+
+      await BA.add({ book_id: book.id, author_id });
+    }
+
+    const updatedBook = await Books.update(id, { title, description });
+    res.status(200).json(updatedBook);
+  } catch (err) {
+    console.log(err);
     res.status(500).json({ error: err });
   }
 });
